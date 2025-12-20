@@ -1,0 +1,13 @@
+sphinxcontrib-svg2pdfconverter
+sphinx==4.3.1
+breathe==4.35.0
+doc8==0.10.1
+sphinx_rtd_theme==0.5.2
+sphinxcontrib.spelling==7.2.1
+sphinxcontrib-imagehelper==1.1.1
+colcon-common-extensions==0.2.1
+colcon-mixin==0.2.0
+vcstool==0.3.0
+GitPython==3.1.37
+setuptools==67.6.0
+docutils==0.16.0
