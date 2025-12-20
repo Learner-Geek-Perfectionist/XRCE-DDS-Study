@@ -1,0 +1,12 @@
+[workspace]
+authors = ["信萌新 <1273730703@qq.com>"]
+channels = ["conda-forge"]
+name = "Micro-XRCE-DDS"
+platforms = ["linux-64", "linux-aarch64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+cmake = "3.28.*"
+openjdk = "17.*"

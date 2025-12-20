@@ -109,6 +109,63 @@
 // [代码 + 详细中文注释]
 ```
 
+## 源码学习
+
+源码位于 `Micro-XRCE-DDS/` 目录，这是一个 CMake 超级项目，包含：
+- Client 库（通过 submodule 引入）
+- Agent 库（通过 submodule 引入）
+- Gen 代码生成工具（通过 submodule 引入）
+
+### 源码结构
+```
+Micro-XRCE-DDS/
+├── CMakeLists.txt      # 主构建配置
+├── cmake/              # CMake 模块
+├── test/               # 测试代码
+└── docs/               # 内置文档
+```
+
+### 源码阅读建议
+1. 先阅读 `CMakeLists.txt` 了解项目结构
+2. 结合 `.rst` 文档理解 API 设计
+3. 查看 `test/` 目录的测试用例作为示例
+
+## 构建环境
+
+项目使用 [Pixi](https://pixi.sh/) 管理依赖，配置在 `pixi.toml`。
+
+### 环境设置
+```bash
+# 安装 pixi（如果未安装）
+curl -fsSL https://pixi.sh/install.sh | bash
+
+# 激活环境
+pixi shell
+```
+
+### 构建命令
+```bash
+./build.sh              # 配置 + 编译
+./build.sh cmake        # 仅配置
+./build.sh build        # 配置 + 编译（默认）
+./build.sh install      # 编译 + 安装到 install/
+./build.sh clean        # 清理构建目录
+./build.sh rebuild      # 清理 + 重新编译
+./build.sh --no-log build  # 编译（保持颜色输出）
+```
+
+### CMake 选项
+```bash
+./build.sh cmake -DCMAKE_BUILD_TYPE=Debug
+./build.sh build -DUXRCE_ENABLE_GEN=ON
+```
+
+## 特殊指令（扩展）
+
+- `@源码 [路径]` - 查看并解释源码文件
+- `@编译` - 显示编译帮助
+- `@示例` - 列出可运行的示例程序
+
 ## 资源链接
 
 - 官方文档: https://micro-xrce-dds.docs.eprosima.com/
