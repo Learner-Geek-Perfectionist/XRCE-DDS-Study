@@ -21,6 +21,8 @@
 /logs
 !build_qnx/*
 /assets
+/install    
+/build
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source because binary files in Git are inelegant
@@ -92,7 +94,6 @@ obj/
 ###########################
 temp/
 tmp/
-# /build*/*  # 保留 build 目录用于 HTML 文档
 /CMakeFiles
 /examples/hello_world/build
 dist/
