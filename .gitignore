@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 编译产物
+*.o
+*.a
+*.so
+*.dylib
+build/
+cmake-build-*/
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+python_deps/
+
+# 临时文件
+*.tmp
+*.temp
+*.log
+
