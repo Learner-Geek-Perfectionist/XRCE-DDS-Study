@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$ROOT_DIR/Micro-XRCE-DDS"  # 实际的 CMake 项目目录
 BUILD_DIR="${BUILD_DIR:-$ROOT_DIR/build}"
 LOG_DIR="$BUILD_DIR/logs"
 DEFAULT_CMAKE_ARGS=(
@@ -227,11 +228,11 @@ cmake_configure() {
   mkdir -p "$BUILD_DIR"
   # 临时取消 NO_COLOR 以确保颜色输出正常
   export PIXI_TOOL_REPORT_BANNER="$(unset NO_COLOR; _banner_line "Toolchain report (pixi + cmake)")"
-  (cd "$BUILD_DIR" && unset NO_COLOR; cmake -S "$ROOT_DIR" -B . "${DEFAULT_CMAKE_ARGS[@]}" "$@")
+  (cd "$BUILD_DIR" && unset NO_COLOR; cmake -S "$SRC_DIR" -B . "${DEFAULT_CMAKE_ARGS[@]}" "$@")
 }
 
 ensure_cmakelists_hook() {
-  local cmakelists="$ROOT_DIR/CMakeLists.txt"
+  local cmakelists="$SRC_DIR/CMakeLists.txt"
   local marker="# >>> pixi tool report >>>"
   grep -qF "$marker" "$cmakelists" && return 0
 
