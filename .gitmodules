@@ -1,0 +1,9 @@
+[submodule "Micro-XRCE-DDS"]
+	path = Micro-XRCE-DDS
+	url = https://github.com/eProsima/Micro-XRCE-DDS.git
+[submodule "Micro-XRCE-DDS-docs"]
+	path = Micro-XRCE-DDS-docs
+	url = https://github.com/eProsima/Micro-XRCE-DDS-docs.git
+[submodule "ShapesDemo"]
+	path = ShapesDemo
+	url = https://github.com/eProsima/ShapesDemo.git

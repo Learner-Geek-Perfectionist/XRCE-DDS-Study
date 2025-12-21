@@ -83,18 +83,19 @@ run_logged() {
 
 usage() {
   cat <<'EOF'
-用法: ./build.sh [--no-log] [cmake|build|make|install|clean|rebuild] [额外参数...]
+用法: ./build.sh [--no-log] [cmake|build|make|install|clean|rebuild|shapesdemo] [额外参数...]
 
 选项:
   --no-log : 禁用日志记录（保持完整颜色输出）
 
 命令:
-- cmake   : 仅配置 (cmake -S -B)
-- build   : 配置 + 编译 (默认)
-- make    : 使用 Unix Makefiles 并 make -j
-- install : 编译 + 安装到 install 目录
-- clean   : 清理 build 目录（保留 build/logs）
-- rebuild : clean + build（保留 build/logs）
+- cmake      : 仅配置 (cmake -S -B)
+- build      : 配置 + 编译 (默认)
+- make       : 使用 Unix Makefiles 并 make -j
+- install    : 编译 + 安装到 install 目录
+- clean      : 清理 build 目录（保留 build/logs）
+- rebuild    : clean + build（保留 build/logs）
+- shapesdemo : 克隆并构建 ShapesDemo GUI (支持 --clean 参数)
 
 示例:
   ./build.sh
@@ -102,6 +103,8 @@ usage() {
   ./build.sh build -DUXRCE_ENABLE_GEN=ON
   ./build.sh --no-log build   # 保持颜色输出
   ./build.sh install
+  ./build.sh shapesdemo         # 构建 ShapesDemo
+  ./build.sh shapesdemo --clean # 清理后重新构建 ShapesDemo
 EOF
 }
 
@@ -263,6 +266,19 @@ do_clean() {
     fi
   fi
 
+  # 清理 ShapesDemo 构建目录
+  local SHAPESDEMO_BUILD="$ROOT_DIR/ShapesDemo/build"
+  if [[ -d "$SHAPESDEMO_BUILD" ]]; then
+    log "   - 清理 ShapesDemo 构建目录: $SHAPESDEMO_BUILD"
+    if [[ "$keep_logs" == "true" ]]; then
+      find "$SHAPESDEMO_BUILD" -mindepth 1 -maxdepth 1 \
+        ! -name logs \
+        -exec rm -rf {} + 2>/dev/null || true
+    else
+      rm -rf "$SHAPESDEMO_BUILD"
+    fi
+  fi
+
   # 清理项目内的 .gradle 目录
   if [[ -d "$ROOT_DIR/.gradle" ]]; then
     log "   - 删除项目 Gradle 缓存: $ROOT_DIR/.gradle"
@@ -288,7 +304,7 @@ fi
 cmd=${1:-build}
 case "$cmd" in
   -h|--help|help) usage; exit 0 ;;
-  cmake|build|make|install|clean|rebuild) shift || true ;;
+  cmake|build|make|install|clean|rebuild|shapesdemo) shift || true ;;
   *) cmd=build ;;  # 兼容 ./build.sh -DCMAKE_BUILD_TYPE=Debug
 esac
 
@@ -321,9 +337,96 @@ main() {
     install)
       cmake_configure "$@"
       CLICOLOR_FORCE=1 CMAKE_COLOR_DIAGNOSTICS=ON cmake --build "$BUILD_DIR" --parallel "$(jobs)"
-      log "📦 安装到: $ROOT_DIR/install"
+      log "📦 安装 Micro-XRCE-DDS 到: $ROOT_DIR/install"
       CLICOLOR_FORCE=1 CMAKE_COLOR_DIAGNOSTICS=ON cmake --install "$BUILD_DIR"
-      log "✅ 安装完成!"
+      log "✅ Micro-XRCE-DDS 安装完成!"
+
+      # 构建并安装 ShapesDemo
+      local SHAPESDEMO_DIR="$ROOT_DIR/ShapesDemo"
+      local SHAPESDEMO_BUILD="$SHAPESDEMO_DIR/build"
+      local INSTALL_PREFIX="$ROOT_DIR/install"
+
+      if [[ -d "$SHAPESDEMO_DIR" ]]; then
+        log "🎨 构建并安装 ShapesDemo..."
+        mkdir -p "$SHAPESDEMO_BUILD"
+        (
+          cd "$SHAPESDEMO_BUILD"
+          cmake .. \
+            -DCMAKE_PREFIX_PATH="$INSTALL_PREFIX" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
+            -DCMAKE_COLOR_DIAGNOSTICS=ON
+          CLICOLOR_FORCE=1 CMAKE_COLOR_DIAGNOSTICS=ON cmake --build . --parallel "$(jobs)"
+          cmake --install .
+        )
+        if [[ $? -eq 0 ]]; then
+          log "✅ ShapesDemo 安装完成!"
+        else
+          log "⚠️ ShapesDemo 构建/安装失败"
+        fi
+      else
+        log "⚠️ ShapesDemo 目录不存在，跳过"
+      fi
+      ;;
+    shapesdemo)
+      log "🎨 构建 ShapesDemo GUI..."
+      local SHAPESDEMO_DIR="$ROOT_DIR/ShapesDemo"
+      local SHAPESDEMO_BUILD="$SHAPESDEMO_DIR/build"
+      local SHAPESDEMO_LOG_DIR="$SHAPESDEMO_BUILD/logs"
+      local INSTALL_PREFIX="$ROOT_DIR/install"
+      local do_clean=false
+
+      # 解析 --clean 参数
+      for arg in "$@"; do
+        case "$arg" in
+          --clean) do_clean=true ;;
+        esac
+      done
+
+      # 检查 ShapesDemo 目录是否存在
+      if [[ ! -d "$SHAPESDEMO_DIR" ]]; then
+        log "❌ ShapesDemo 目录不存在: $SHAPESDEMO_DIR"
+        log "   请先克隆仓库: git clone https://github.com/eProsima/ShapesDemo.git $SHAPESDEMO_DIR"
+        return 1
+      fi
+
+      # 清理构建目录（如果指定了 --clean）
+      if [[ "$do_clean" == "true" && -d "$SHAPESDEMO_BUILD" ]]; then
+        log "   - 清理 ShapesDemo 构建目录..."
+        find "$SHAPESDEMO_BUILD" -mindepth 1 -maxdepth 1 \
+          ! -name logs \
+          -exec rm -rf {} + 2>/dev/null || true
+      fi
+
+      # 创建构建和日志目录
+      mkdir -p "$SHAPESDEMO_BUILD"
+      mkdir -p "$SHAPESDEMO_LOG_DIR"
+
+      local shapesdemo_log="$SHAPESDEMO_LOG_DIR/build-$(cmake_ts "%Y%m%d-%H%M%S").log"
+      ln -sfn "${shapesdemo_log##*/}" "$SHAPESDEMO_LOG_DIR/latest.log"
+
+      log "   - 日志文件: $shapesdemo_log"
+
+      # 配置和构建（记录日志）
+      (
+        log "   - 配置 CMake..."
+        cd "$SHAPESDEMO_BUILD"
+        cmake .. \
+          -DCMAKE_PREFIX_PATH="$INSTALL_PREFIX" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_COLOR_DIAGNOSTICS=ON
+
+        log "   - 编译中..."
+        CLICOLOR_FORCE=1 CMAKE_COLOR_DIAGNOSTICS=ON cmake --build . --parallel "$(jobs)"
+      ) 2>&1 | tee -a "$shapesdemo_log"
+
+      if [[ "${PIPESTATUS[0]}" -eq 0 ]]; then
+        log "✅ ShapesDemo 构建完成!"
+        log "   可执行文件: $SHAPESDEMO_BUILD/ShapesDemo"
+      else
+        log "❌ ShapesDemo 构建失败，请查看日志: $shapesdemo_log"
+        return 1
+      fi
       ;;
   esac
 }

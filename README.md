@@ -11,45 +11,65 @@ XRCE-DDS-Study/
 ├── build.sh                  # 构建脚本
 ├── pixi.toml                 # Pixi 依赖配置
 │
-├── Micro-XRCE-DDS/           # eProsima 源码
-│   ├── CMakeLists.txt
-│   ├── test/
-│   └── ...
+├── Micro-XRCE-DDS/           # [submodule] eProsima 源码
+├── Micro-XRCE-DDS-docs/      # [submodule] eProsima 官方文档
+├── ShapesDemo/               # [submodule] ShapesDemo GUI
 │
-├── Micro-XRCE-DDS-docs/      # eProsima 官方文档
-│   └── docs/*.rst
+├── scripts/                  # 环境脚本
+│   └── env.sh                # pixi 激活时自动设置 LD_LIBRARY_PATH
+│
+├── install/                  # 编译产物安装目录
+│   ├── bin/                  # 可执行文件
+│   └── lib/                  # 库文件
 │
 ├── progress/                 # 学习进度追踪
 │   └── tracker.md
 │
-├── sessions/                 # 学习会话记录
-│   └── SESSION-TEMPLATE.md
-│
-└── notes/                    # 个人笔记
+└── sessions/                 # 学习会话记录
+    └── SESSION-TEMPLATE.md
 ```
 
 ## 快速开始
 
-### 1. 环境设置
+### 1. 克隆仓库
+
+```bash
+# 方式 1：一次性克隆（推荐）
+git clone --recursive https://github.com/Learner-Geek-Perfectionist/XRCE-DDS-Study.git
+
+# 方式 2：分步克隆
+git clone https://github.com/Learner-Geek-Perfectionist/XRCE-DDS-Study.git
+cd XRCE-DDS-Study
+git submodule update --init --recursive
+```
+
+> ⚠️ **注意**: 本仓库包含 Git submodule，必须使用 `--recursive` 或手动初始化 submodule，否则 `Micro-XRCE-DDS`、`Micro-XRCE-DDS-docs`、`ShapesDemo` 目录会是空的。
+
+### 2. 环境设置
 
 ```bash
 # 安装 pixi（如果未安装）
 curl -fsSL https://pixi.sh/install.sh | bash
 
-# 激活环境
+# 进入项目目录
 cd ~/XRCE-DDS-Study
+
+# 安装依赖并激活环境
+pixi install
 pixi shell
 ```
 
-### 2. 编译源码
+### 3. 编译源码
 
 ```bash
-./build.sh              # 配置 + 编译
-./build.sh install      # 编译 + 安装
-./build.sh clean        # 清理
+./build.sh              # 配置 + 编译 Micro-XRCE-DDS
+./build.sh install      # 编译 + 安装（包括 ShapesDemo）
+./build.sh shapesdemo   # 单独构建 ShapesDemo GUI
+./build.sh clean        # 清理所有构建产物
+./build.sh rebuild      # 清理后重新构建
 ```
 
-### 3. 开始学习
+### 4. 开始学习
 
 用 Cursor 打开项目，在 Chat 中对话：
 

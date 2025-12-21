@@ -10,3 +10,10 @@ version = "0.1.0"
 [dependencies]
 cmake = "3.28.*"
 openjdk = "17.*"
+qt-main = "5.*"
+libgl-devel = "*"
+mesalib = "*"
+
+[activation]
+# 进入 pixi shell 时自动设置环境变量
+scripts = ["scripts/env.sh"]
