@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # pixi activation script - 自动设置 XRCE-DDS 环境变量
 
-# 获取项目根目录
-XRCE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# 使用 pixi 提供的项目根目录（pixi shell-hook 会在执行此脚本前设置）
+XRCE_ROOT="${PIXI_PROJECT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)}"
 XRCE_INSTALL="$XRCE_ROOT/install"
 
 # 设置库路径（运行时动态链接）
