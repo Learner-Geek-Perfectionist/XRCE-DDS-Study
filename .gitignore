@@ -105,5 +105,6 @@ config.json
 config.development.json
 config.production.json
 
+.pixi/
 pixi.lock
 !.pixi/config.toml
