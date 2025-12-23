@@ -141,7 +141,8 @@ set(_C_CYAN "")
 set(_C_GREEN "")
 set(_C_RED "")
 
-if(CMAKE_COLOR_MAKEFILE AND NOT DEFINED ENV{NO_COLOR})
+# Enable colors unless NO_COLOR env is set
+if(NOT DEFINED ENV{NO_COLOR})
   string(ASCII 27 _esc)
   set(_C_RST    "\${_esc}[0m")
   set(_C_YELLOW "\${_esc}[33m")
