@@ -11,9 +11,9 @@ XRCE-DDS-Study/
 ├── build.sh                  # 构建脚本
 ├── pixi.toml                 # Pixi 依赖配置
 │
-├── Micro-XRCE-DDS/           # [submodule] eProsima 源码
-├── Micro-XRCE-DDS-docs/      # [submodule] eProsima 官方文档
-├── ShapesDemo/               # [submodule] ShapesDemo GUI
+├── Micro-XRCE-DDS/           # eProsima 源码
+├── Micro-XRCE-DDS-docs/      # eProsima 官方文档
+├── ShapesDemo/               # ShapesDemo GUI
 │
 ├── scripts/                  # 环境脚本
 │   └── env.sh                # pixi 激活时自动设置 LD_LIBRARY_PATH
@@ -34,16 +34,9 @@ XRCE-DDS-Study/
 ### 1. 克隆仓库
 
 ```bash
-# 方式 1：一次性克隆（推荐）
-git clone --recursive https://github.com/Learner-Geek-Perfectionist/XRCE-DDS-Study.git
-
-# 方式 2：分步克隆
 git clone https://github.com/Learner-Geek-Perfectionist/XRCE-DDS-Study.git
 cd XRCE-DDS-Study
-git submodule update --init --recursive
 ```
-
-> ⚠️ **注意**: 本仓库包含 Git submodule，必须使用 `--recursive` 或手动初始化 submodule，否则 `Micro-XRCE-DDS`、`Micro-XRCE-DDS-docs`、`ShapesDemo` 目录会是空的。
 
 ### 2. 环境设置
 
