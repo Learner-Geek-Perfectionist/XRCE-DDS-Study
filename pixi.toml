@@ -10,6 +10,6 @@ version = "0.1.0"
 [dependencies]
 cmake = "3.28.*"
 openjdk = "17.*"
-qt-main = "5.*"
+qt6-main = "*"
 libgl-devel = "*"
 mesalib = "*"
