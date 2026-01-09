@@ -13,3 +13,5 @@ openjdk = "17.*"
 qt6-main = "*"
 libgl-devel = "*"
 mesalib = "*"
+# 编译器
+compilers = ">=1.0"
