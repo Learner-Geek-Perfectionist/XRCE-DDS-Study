@@ -108,3 +108,7 @@ config.production.json
 .pixi/
 pixi.lock
 !.pixi/config.toml
+
+# disallow docs directories anywhere in the repo
+/docs/
+**/docs/
